@@ -115,16 +115,23 @@ def postit(message):
     print(f"sending: {message}")
     urequests.post("https://yourdomain.com/morse/", data=message)
 
-
-print("Connecting to wifi", end="")
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect("your wifi network", "your wifi password")
-while not wlan.isconnected():
-    print(".", end="")
-    time.sleep(0.1)
-print(" Connected!")
 
 morse_translator = MorseCodeTranslator()
+print("Let's go!")
+count = 0
 while True:
-    time.sleep(1)
+    if not wlan.isconnected():
+        print("reconnecting to wifi", end="")
+        wlan.active(True)
+        wlan.connect("your wifi network", "your wifi password")
+        while not wlan.isconnected() and count < 15:
+            print(".", end="")
+            count += 1
+            time.sleep(1)
+        if not wlan.isconnected():
+            print("still not connected, resetting")
+            reset()
+    print("connected.")
+    time.sleep(5)
